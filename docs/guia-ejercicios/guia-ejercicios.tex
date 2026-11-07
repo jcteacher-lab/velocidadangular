@@ -1,0 +1,530 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{parskip}
+\usepackage{xcolor}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usetikzlibrary{babel, arrows.meta}
+\usepackage{longtable}
+\pgfplotsset{compat=1.16}
+\usepackage{hyperref}
+\hypersetup{
+  pdftitle={Velocidad Angular y Movimiento Circular},
+  pdfauthor={MTI. Juan Carlos Santiago Sánchez},
+  colorlinks=true, linkcolor=black, urlcolor=blue
+}
+\geometry{margin=2.2cm}
+
+\title{\textbf{Velocidad Angular y Movimiento Circular}\\[0.3em]
+\large Fundamentación Teórica, Ejemplos Desarrollados y Banco de Problemas Resueltos}
+\author{MTI. Juan Carlos Santiago Sánchez\\[0.2em]
+\texttt{juancarlos.santiago.cb161@dgeti.sems.gob.mx}}
+\date{\today}
+
+\begin{document}
+\maketitle
+\newpage
+
+% ============================================================
+%  MARCO TEÓRICO
+% ============================================================
+\section*{Marco Teórico: Velocidad Angular y Movimiento Circular}
+
+Desde la perspectiva de la mecánica clásica, tal como la presentan Resnick, Halliday y Krane (1998) en su obra \textit{Física}, el \textbf{movimiento circular uniforme (MCU)} se define como aquel en el que un cuerpo describe una trayectoria circular de radio constante \(r\), recorriendo ángulos iguales en tiempos iguales. La magnitud fundamental que caracteriza este movimiento es la \textbf{velocidad angular} \(\omega\), definida como la razón de cambio del ángulo barrido respecto al tiempo:
+
+\[
+\omega = \frac{\Delta\theta}{\Delta t} \qquad [\text{rad/s}]
+\]
+
+En el MCU, \(\omega\) es constante, por lo que el ángulo en función del tiempo se expresa como:
+
+\[
+\theta(t) = \theta_0 + \omega\,t
+\]
+
+La velocidad angular está relacionada con otras magnitudes fundamentales del movimiento circular:
+
+\begin{itemize}
+  \item \textbf{Periodo} \(T\): tiempo que tarda el cuerpo en dar una vuelta completa (\(2\pi\) radianes).
+  \[
+  T = \frac{2\pi}{\omega} \qquad [\text{s}]
+  \]
+  \item \textbf{Frecuencia} \(f\): número de vueltas por unidad de tiempo. Es el inverso del periodo.
+  \[
+  f = \frac{1}{T} = \frac{\omega}{2\pi} \qquad [\text{Hz}]
+  \]
+  \item \textbf{Frecuencia en revoluciones por minuto} (rpm):
+  \[
+  N = 60\,f = \frac{60\,\omega}{2\pi} \qquad [\text{rpm}]
+  \]
+  \item \textbf{Velocidad tangencial} \(v\): rapidez con que el cuerpo recorre la trayectoria circular. Es perpendicular al radio en cada instante.
+  \[
+  v = \omega\,r \qquad [\text{m/s}]
+  \]
+  \item \textbf{Aceleración centrípeta} \(a_c\): aceleración dirigida hacia el centro, responsable de cambiar la dirección de la velocidad.
+  \[
+  a_c = \frac{v^2}{r} = \omega^2\,r \qquad [\text{m/s}^2]
+  \]
+  \item \textbf{Fuerza centrípeta} \(F_c\): fuerza neta dirigida al centro que produce la aceleración centrípeta. En una cuerda, coincide con la tensión.
+  \[
+  F_c = m\,a_c = m\,\omega^2\,r \qquad [\text{N}]
+  \]
+  \item \textbf{Energía cinética} \(E_c\):
+  \[
+  E_c = \frac{1}{2}\,m\,v^2 = \frac{1}{2}\,m\,\omega^2\,r^2 \qquad [\text{J}]
+  \]
+  \item \textbf{Momento angular} \(L\) (respecto al centro):
+  \[
+  L = m\,v\,r = m\,\omega\,r^2 \qquad [\text{kg}\cdot\text{m}^2/\text{s}]
+  \]
+\end{itemize}
+
+\subsection*{Diagrama del Movimiento Circular Uniforme}
+
+En la siguiente figura se muestran los elementos característicos del MCU: el objeto \(m\) gira con velocidad angular \(\omega\) alrededor del pivote \(O\), describiendo una trayectoria circular de radio \(r\). Se ilustran los vectores de velocidad tangencial \(\vec{v}\), aceleración centrípeta \(\vec{a}_c\) y fuerza centrípeta \(\vec{F}_c\).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.85, >=Stealth]
+  % Ejes
+  \draw[->, thick] (-5,0) -- (5,0) node[right]{\(x\)};
+  \draw[->, thick] (0,-5) -- (0,5) node[above]{\(y\)};
+
+  % Trayectoria circular
+  \draw[thick, purple!70, dashed] (0,0) circle (3.5);
+
+  % Radio
+  \def\ang{35}
+  \coordinate (O) at (0,0);
+  \coordinate (P) at ({3.5*cos(\ang)},{3.5*sin(\ang)});
+
+  % Cuerda / radio
+  \draw[thick, gray!70] (O) -- (P);
+
+  % Etiqueta del radio
+  \node[above, font=\small] at ({1.75*cos(\ang)},{1.75*sin(\ang)+0.2}) {\(r\)};
+
+  % Pivote
+  \fill[yellow!80!black] (O) circle (3pt);
+  \node[below left, font=\small] at (O) {\(O\)};
+
+  % Objeto
+  \fill[orange!80!black] (P) circle (6pt);
+  \node[above right, font=\small] at (P) {\(m\)};
+
+  % Vector velocidad tangencial (perpendicular al radio, en sentido del giro)
+  \draw[->, thick, red!70!black, line width=1.2pt]
+    (P) -- ++({-sin(\ang)*1.8},{cos(\ang)*1.8})
+    node[midway, above left, color=red!70!black, font=\small] {\(\vec{v}\)};
+
+  % Vector aceleración centrípeta (hacia el centro)
+  \draw[->, thick, green!50!black, line width=1.2pt]
+    (P) -- ++({-cos(\ang)*1.8},{-sin(\ang)*1.8})
+    node[midway, below right, color=green!50!black, font=\small] {\(\vec{a}_c\)};
+
+  % Vector fuerza centrípeta (paralelo a ac, más largo)
+  \draw[->, thick, blue!70!black, line width=1.2pt]
+    (P) -- ++({-cos(\ang)*2.5},{-sin(\ang)*2.5})
+    node[midway, below left, color=blue!70!black, font=\small] {\(\vec{F}_c\)};
+
+  % Arco del ángulo
+  \draw[thick, cyan!70!black, ->] (0.8,0) arc (0:\ang:0.8);
+  \node[font=\small, color=cyan!70!black] at (0.9,0.35) {\(\theta\)};
+
+  % Etiquetas informativas
+  \node[align=left, font=\small, fill=white, fill opacity=0.8, text opacity=1,
+        draw=black!30, rounded corners=3pt, inner sep=5pt] at (-3.5,-4) {
+    \(v = \omega\,r\)\\
+    \(a_c = \omega^2\,r\)\\
+    \(F_c = m\,\omega^2\,r\)\\
+    \(T = \dfrac{2\pi}{\omega}\)
+  };
+
+  % Sentido de giro
+  \draw[->, thick, cyan!70!black] (2.8,2.2) arc (50:70:3.5);
+  \node[font=\small, color=cyan!70!black] at (3.2,2.8) {\(\omega\)};
+\end{tikzpicture}
+\caption{Elementos del movimiento circular uniforme: objeto \(m\) girando con velocidad angular \(\omega\), vectores de velocidad tangencial \(\vec{v}\), aceleración centrípeta \(\vec{a}_c\) y fuerza centrípeta \(\vec{F}_c\).}
+\end{figure}
+
+\subsection*{Relaciones Clave entre Magnitudes}
+
+A partir de las definiciones anteriores, se deducen relaciones útiles que permiten pasar de una magnitud a otra:
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{p{6.5cm} p{8cm}}
+\toprule
+\textbf{Magnitud} & \textbf{Expresión en función de \(\omega\)}\\
+\midrule
+Velocidad tangencial & \(v = \omega\,r\)\\
+Aceleración centrípeta & \(a_c = \omega^2\,r\)\\
+Fuerza centrípeta & \(F_c = m\,\omega^2\,r\)\\
+Energía cinética & \(E_c = \frac{1}{2}\,m\,\omega^2\,r^2\)\\
+Momento angular & \(L = m\,\omega\,r^2\)\\
+Periodo & \(T = \dfrac{2\pi}{\omega}\)\\
+Frecuencia & \(f = \dfrac{\omega}{2\pi}\)\\
+Revoluciones por minuto & \(N = \dfrac{30\,\omega}{\pi}\)\\
+\bottomrule
+\end{tabular}
+\caption{Relaciones entre las magnitudes del MCU y la velocidad angular \(\omega\).}
+\end{table}
+
+\subsection*{Observaciones Importantes}
+
+\begin{enumerate}
+  \item La velocidad angular \(\omega\) se mide en \textbf{radianes por segundo} (rad/s) en el SI. Para convertir desde rpm: \(\omega = \dfrac{2\pi\,N}{60}\).
+  \item La \textbf{fuerza centrípeta} no es una fuerza nueva: es la resultante de las fuerzas reales (tensión, gravedad, fricción, normal) que apuntan al centro.
+  \item Si \(\omega\) se \textbf{duplica}, la fuerza centrípeta se \textbf{cuadruplica} (depende de \(\omega^2\)).
+  \item En MCU, la \textbf{aceleración tangencial es cero}; solo existe aceleración centrípeta.
+\end{enumerate}
+
+\newpage
+
+% ============================================================
+%  EJEMPLOS REPRESENTATIVOS
+% ============================================================
+\section*{Ejemplos Representativos por Nivel de Dificultad}
+
+\subsection*{Ejemplo Nivel 1 (Básico): Cálculo directo de magnitudes del MCU}
+
+\textbf{Problema:} Una piedra de masa \(m = 0{,}5\) kg atada a una cuerda de longitud \(r = 1{,}2\) m gira con velocidad angular \(\omega = 4\) rad/s. Calcule: (a) la velocidad tangencial, (b) la aceleración centrípeta, (c) la tensión de la cuerda, (d) el periodo, (e) la frecuencia en Hz y en rpm.
+
+\textbf{Solución:}
+
+(a) \textbf{Velocidad tangencial:}
+\[
+v = \omega\,r = 4 \times 1{,}2 = \mathbf{4{,}8 \text{ m/s}}
+\]
+
+(b) \textbf{Aceleración centrípeta:}
+\[
+a_c = \omega^2\,r = 4^2 \times 1{,}2 = 16 \times 1{,}2 = \mathbf{19{,}2 \text{ m/s}^2}
+\]
+
+(c) \textbf{Tensión de la cuerda} (igual a la fuerza centrípeta en MCU horizontal):
+\[
+T = F_c = m\,\omega^2\,r = 0{,}5 \times 16 \times 1{,}2 = \mathbf{9{,}6 \text{ N}}
+\]
+
+(d) \textbf{Periodo:}
+\[
+T_p = \frac{2\pi}{\omega} = \frac{2\pi}{4} = \mathbf{\frac{\pi}{2} \approx 1{,}57 \text{ s}}
+\]
+
+(e) \textbf{Frecuencia:}
+\[
+f = \frac{1}{T_p} = \frac{4}{2\pi} = \mathbf{\frac{2}{\pi} \approx 0{,}64 \text{ Hz}}
+\]
+\[
+N = 60\,f = \frac{120}{\pi} \approx \mathbf{38{,}20 \text{ rpm}}
+\]
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  axis lines=middle,
+  grid=both,
+  xlabel={\(x\) (m)}, ylabel={\(y\) (m)},
+  xmin=-2.5, xmax=2.5,
+  ymin=-2.5, ymax=2.5,
+  width=10cm, height=10cm,
+  axis equal,
+  every node/.append style={font=\footnotesize},
+  grid style={line width=.1pt, draw=gray!20},
+  major grid style={line width=.2pt, draw=gray!40}
+]
+  % Trayectoria
+  \draw[thick, purple!70, dashed] (axis cs:0,0) circle (1.2);
+  % Cuerda
+  \draw[thick, gray] (axis cs:0,0) -- (axis cs:1.2,0);
+  % Pivote
+  \addplot[mark=*, mark size=3pt, color=yellow!80!black] coordinates {(0,0)};
+  % Objeto
+  \addplot[mark=*, mark size=5pt, color=orange!80!black] coordinates {(1.2,0)};
+  \node[right, font=\small] at (axis cs:1.2,0) {\(m = 0{,}5\) kg};
+  % Vector velocidad
+  \draw[->, thick, red!70!black, line width=1.2pt] (axis cs:1.2,0) -- (axis cs:1.2,0.8)
+    node[right, color=red!70!black, font=\small] {\(\vec{v}\)};
+  % Vector ac
+  \draw[->, thick, green!50!black, line width=1.2pt] (axis cs:1.2,0) -- (axis cs:0.5,0)
+    node[above, color=green!50!black, font=\small] {\(\vec{a}_c\)};
+  % Etiqueta radio
+  \node[above, font=\small] at (axis cs:0.6,0.1) {\(r = 1{,}2\) m};
+\end{axis}
+\end{tikzpicture}
+\caption{Piedra girando con \(\omega = 4\) rad/s, \(r = 1{,}2\) m.}
+\end{figure}
+
+\subsection*{Ejemplo Nivel 2 (Intermedio): Conversión de unidades y análisis de fuerzas}
+
+\textbf{Problema:} Un automóvil de masa \(m = 1200\) kg toma una curva circular horizontal de radio \(r = 50\) m a una velocidad de \(N = 72\) rpm (revoluciones por minuto) de una rueda de referencia. Determine: (a) la velocidad angular en rad/s, (b) la velocidad tangencial del auto, (c) la fuerza de fricción necesaria para mantener la curva, (d) el coeficiente de fricción mínimo requerido.
+
+\textbf{Solución:}
+
+(a) \textbf{Conversión de rpm a rad/s:}
+\[
+\omega = \frac{2\pi\,N}{60} = \frac{2\pi \times 72}{60} = \frac{144\pi}{60} = \mathbf{2{,}4\pi \approx 7{,}54 \text{ rad/s}}
+\]
+
+\textit{Nota: en este problema, las rpm se refieren al movimiento angular del auto alrededor del centro de la curva. La velocidad tangencial se calcula con \(\omega\).}
+
+(b) \textbf{Velocidad tangencial:}
+\[
+v = \omega\,r = 7{,}54 \times 50 = \mathbf{377 \text{ m/s}}
+\]
+
+\textit{Nota: este valor es físicamente irreal para un auto (supera la velocidad del sonido). El ejercicio es un ejemplo numérico; en la práctica las rpm de una curva de auto se expresan de otra forma. Ajustemos el problema: usemos \(N = 72\) rpm como referencia angular ficticia para ilustrar el método.}
+
+(c) \textbf{Fuerza centrípeta} (proporcionada por la fricción):
+\[
+F_c = m\,\omega^2\,r = 1200 \times (7{,}54)^2 \times 50 \approx \mathbf{3{,}41 \times 10^6 \text{ N}}
+\]
+
+(d) \textbf{Coeficiente de fricción mínimo:}
+\[
+\mu_{\min} = \frac{F_c}{m\,g} = \frac{3{,}41 \times 10^6}{1200 \times 9{,}8} \approx 289
+\]
+
+\textit{Interpretación: el valor es físicamente absurdo, lo que confirma que 72 rpm para un auto en curva de 50 m es un dato irreal. Este ejemplo ilustra el \textbf{método} de resolución; en los problemas reales del banco, los datos son coherentes.}
+
+\textbf{Versión realista del problema:} si el auto viaja a \(v = 20\) m/s (72 km/h) en curva de \(r = 50\) m:
+
+\[
+\omega = \frac{v}{r} = \frac{20}{50} = 0{,}4 \text{ rad/s}
+\]
+\[
+F_c = \frac{m\,v^2}{r} = \frac{1200 \times 400}{50} = 9600 \text{ N}
+\]
+\[
+\mu_{\min} = \frac{9600}{1200 \times 9{,}8} \approx \mathbf{0{,}82}
+\]
+
+\subsection*{Ejemplo Nivel 3 (Avanzado): Péndulo cónico}
+
+\textbf{Problema:} Una bola de masa \(m = 0{,}8\) kg cuelga de una cuerda de longitud \(L = 1{,}5\) m y describe un movimiento circular horizontal formando un ángulo \(\theta = 30^\circ\) con la vertical. Determine: (a) la tensión de la cuerda, (b) la velocidad angular \(\omega\), (c) el radio de la trayectoria, (d) la velocidad tangencial, (e) el periodo.
+
+\textbf{Solución:}
+
+El radio de la trayectoria es:
+\[
+r = L\,\sin\theta = 1{,}5 \times \sin 30^\circ = 1{,}5 \times 0{,}5 = \mathbf{0{,}75 \text{ m}}
+\]
+
+(a) \textbf{Tensión de la cuerda:} la componente vertical de la tensión equilibra el peso:
+\[
+T\,\cos\theta = m\,g \implies T = \frac{m\,g}{\cos\theta} = \frac{0{,}8 \times 9{,}8}{\cos 30^\circ} = \frac{7{,}84}{0{,}866} = \mathbf{9{,}06 \text{ N}}
+\]
+
+(b) \textbf{Velocidad angular:} la componente horizontal de la tensión proporciona la fuerza centrípeta:
+\[
+T\,\sin\theta = m\,\omega^2\,r \implies \omega^2 = \frac{T\,\sin\theta}{m\,r}
+\]
+\[
+\omega^2 = \frac{9{,}06 \times 0{,}5}{0{,}8 \times 0{,}75} = \frac{4{,}53}{0{,}6} = 7{,}55
+\]
+\[
+\omega = \sqrt{7{,}55} \approx \mathbf{2{,}75 \text{ rad/s}}
+\]
+
+\textit{Fórmula alternativa directa:} \(\omega = \sqrt{\dfrac{g}{L\,\cos\theta}} = \sqrt{\dfrac{9{,}8}{1{,}5 \times 0{,}866}} = \sqrt{7{,}55} \approx 2{,}75\) rad/s.
+
+(c) \textbf{Radio:} \(r = \mathbf{0{,}75 \text{ m}}\) (ya calculado).
+
+(d) \textbf{Velocidad tangencial:}
+\[
+v = \omega\,r = 2{,}75 \times 0{,}75 = \mathbf{2{,}06 \text{ m/s}}
+\]
+
+(e) \textbf{Periodo:}
+\[
+T_p = \frac{2\pi}{\omega} = \frac{2\pi}{2{,}75} \approx \mathbf{2{,}28 \text{ s}}
+\]
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=1.3, >=Stealth]
+  % Ejes de referencia
+  \draw[->, thick, gray!50] (0,0) -- (0,-2.2) node[right]{\scriptsize vertical};
+  \draw[->, thick, gray!50] (0,-1.7) -- (1.5,-1.7) node[right]{\scriptsize horizontal};
+
+  % Punto de suspensión
+  \fill[black] (0,0) circle (1.5pt);
+  \node[above, font=\small] at (0,0) {\(O\)};
+
+  % Cuerda
+  \def\L{1.5}
+  \def\ang{30}
+  \coordinate (P) at ({\L*sin(\ang)},{-\L*cos(\ang)});
+  \draw[thick, black] (0,0) -- (P);
+
+  % Bola
+  \fill[orange!80!black] (P) circle (4pt);
+  \node[below right, font=\small] at (P) {\(m\)};
+
+  % Ángulo con la vertical
+  \draw[thick, cyan!70!black] (0,-0.5) arc (270:300:0.5);
+  \node[font=\small, color=cyan!70!black] at (-0.15,-0.7) {\(\theta\)};
+
+  % Radio de la trayectoria
+  \draw[thick, red!70!black, <->] (0,-1.7) -- ({\L*sin(\ang)},-1.7);
+  \node[below, font=\small, color=red!70!black] at ({\L*sin(\ang)/2},-1.7) {\(r\)};
+
+  % Trayectoria circular (vista de frente, como línea)
+  \draw[thick, purple!70, dashed] (0,-1.7) -- ({\L*sin(\ang)+0.2},-1.7);
+
+  % Etiqueta L
+  \node[above left, font=\small] at ({\L*sin(\ang)/2},{-\L*cos(\ang)/2}) {\(L\)};
+
+  % Tensión
+  \draw[->, thick, blue!70!black, line width=1.2pt]
+    (P) -- ++({-0.4*sin(\ang)},{0.4*cos(\ang)})
+    node[above left, color=blue!70!black, font=\small] {\(\vec{T}\)};
+
+  % Peso
+  \draw[->, thick, green!50!black, line width=1.2pt]
+    (P) -- ++(0,-0.6)
+    node[right, color=green!50!black, font=\small] {\(\vec{W}\)};
+\end{tikzpicture}
+\caption{Péndulo cónico: la bola describe una trayectoria circular horizontal con la cuerda formando un ángulo \(\theta\) con la vertical.}
+\end{figure}
+
+\newpage
+
+% ============================================================
+%  BANCO DE 25 PROBLEMAS
+% ============================================================
+\section*{Banco de 25 Problemas de Práctica}
+
+\subsection*{Nivel 1: Básico (Cálculos directos y conversiones)}
+\begin{enumerate}
+  \item Un disco gira a \(\omega = 6\) rad/s. Calcule su periodo y su frecuencia en Hz.
+  \item Un ventilador gira a \(N = 1800\) rpm. Exprese su velocidad angular en rad/s.
+  \item Una rueda de radio \(r = 0{,}4\) m gira a \(\omega = 10\) rad/s. Calcule la velocidad tangencial de un punto de su borde.
+  \item Un objeto describe un MCU con \(T = 2\) s. Determine \(\omega\), \(f\) y \(N\) (en rpm).
+  \item Una partícula de masa \(m = 2\) kg gira en un círculo de radio \(r = 3\) m con \(\omega = 2\) rad/s. Calcule \(v\), \(a_c\), \(F_c\), \(E_c\) y \(L\).
+  \item Convierta las siguientes velocidades angulares a rad/s: (a) 60 rpm, (b) 300 rpm, (c) 30 rpm, (d) 120 rpm.
+  \item Un satélite artificial orbita la Tierra con periodo \(T = 5400\) s. Determine su velocidad angular y la frecuencia en Hz.
+  \item Una centrifugadora gira a 3000 rpm. Calcule la aceleración centrípeta en el borde de un tubo situado a \(r = 0{,}15\) m del eje.
+\end{enumerate}
+
+\subsection*{Nivel 2: Intermedio (Relaciones entre magnitudes)}
+\begin{enumerate}
+  \setcounter{enumi}{8}
+  \item Una cuerda de longitud \(r = 1{,}5\) m sostiene una masa \(m = 0{,}3\) kg que gira en MCU horizontal. Si la tensión máxima es 30 N, ¿cuál es la velocidad angular máxima permitida?
+  \item Un auto toma una curva de radio \(r = 80\) m a \(v = 25\) m/s. Calcule \(\omega\), \(a_c\) y la fuerza centrípeta si \(m = 1500\) kg.
+  \item Dos ruedas están conectadas por una banda. La rueda motriz tiene radio \(r_1 = 0{,}2\) m y \(\omega_1 = 30\) rad/s. La rueda conducida tiene radio \(r_2 = 0{,}5\) m. Determine \(\omega_2\).
+  \item Un disco de \(m = 5\) kg y radio \(r = 0{,}4\) m gira a 120 rpm. Calcule su energía cinética (considere toda la masa concentrada en el borde).
+  \item Una piedra atada a una cuerda de 1 m gira en un plano vertical. ¿Cuál es la velocidad angular mínima para que la piedra no se desprenda en el punto más alto?
+  \item Un péndulo cónico tiene cuerda de longitud \(L = 2\) m y forma un ángulo \(\theta = 45^\circ\) con la vertical. Determine \(\omega\), el radio de la trayectoria y el periodo.
+  \item Un objeto describe un MCU de radio \(r = 0{,}5\) m. Si su aceleración centrípeta es \(a_c = 20\) m/s\(^2\), determine \(\omega\), \(v\), \(T\) y \(f\).
+  \item ¿Qué velocidad angular debe tener la Tierra para que un objeto en el ecuador pese la mitad de su peso actual? (Radio terrestre \(R_T = 6{,}37 \times 10^6\) m, \(g = 9{,}8\) m/s\(^2\).)
+  \item Una rueda de la fortuna de radio \(R = 12\) m da una vuelta cada 30 s. Calcule la velocidad tangencial y la aceleración centrípeta de un pasajero.
+\end{enumerate}
+
+\subsection*{Nivel 3: Avanzado (Condiciones complejas)}
+\begin{enumerate}
+  \setcounter{enumi}{17}
+  \item Un automóvil toma una curva peraltada de radio \(r = 100\) m con ángulo de peralte \(\alpha = 15^\circ\). Determine la velocidad de diseño para la cual no se requiere fricción.
+  \item Un satélite orbita la Tierra a una altura \(h = 400\) km sobre la superficie. Calcule su velocidad angular, su velocidad tangencial y su periodo. (Datos: \(M_T = 5{,}97 \times 10^{24}\) kg, \(R_T = 6{,}37 \times 10^6\) m, \(G = 6{,}67 \times 10^{-11}\) N·m\(^2\)/kg\(^2\).)
+  \item Una masa \(m = 0{,}5\) kg gira en MCU horizontal atada a una cuerda de \(r = 0{,}8\) m. Si la cuerda se rompe cuando la tensión supera 100 N, determine la velocidad tangencial máxima y la energía cinética en ese instante.
+  \item Dos partículas de masas \(m_1 = 2\) kg y \(m_2 = 3\) kg están unidas por una cuerda de longitud total \(L = 1{,}5\) m y giran alrededor de su centro de masas. Determine los radios de las órbitas de cada partícula y la velocidad angular si la tensión de la cuerda es 60 N.
+  \item Un ciclista toma una curva de radio \(r = 20\) m. Si el coeficiente de fricción estática entre las llantas y el piso es \(\mu_s = 0{,}6\), ¿cuál es la velocidad máxima sin derrapar? Exprese el resultado en km/h.
+  \item Una plataforma horizontal gira a \(\omega\) constante. Un objeto colocado a \(r = 0{,}3\) m del eje no resbala si \(\mu_s = 0{,}4\). Determine la velocidad angular máxima en rad/s y en rpm.
+  \item Un péndulo cónico tiene masa \(m = 1{,}2\) kg, cuerda de longitud \(L = 1\) m y gira a \(\omega = 4\) rad/s. Determine el ángulo \(\theta\) que forma la cuerda con la vertical y la tensión.
+  \item Un disco de hockey de masa \(m = 0{,}17\) kg está atado a una cuerda de \(r = 0{,}8\) m y gira sobre una superficie horizontal sin fricción a \(N = 60\) rpm. Calcule la tensión de la cuerda y el momento angular del disco.
+\end{enumerate}
+
+\newpage
+
+% ============================================================
+%  TABLA DE SOLUCIONES
+% ============================================================
+\section*{Tabla Completa de Soluciones}
+\small
+\begin{longtable}{c p{5.5cm} p{9cm}}
+\toprule
+\textbf{No.} & \textbf{Enunciado resumido} & \textbf{Solución} \\
+\midrule
+\endhead
+1  & \(\omega = 6\) rad/s, hallar \(T\) y \(f\) &
+  \(T = \frac{\pi}{3} \approx 1{,}05\) s; \(f = \frac{3}{\pi} \approx 0{,}95\) Hz \\
+2  & \(N = 1800\) rpm a rad/s &
+  \(\omega = 60\pi \approx 188{,}50\) rad/s \\
+3  & \(r = 0{,}4\) m, \(\omega = 10\) rad/s, hallar \(v\) &
+  \(v = 4\) m/s \\
+4  & \(T = 2\) s, hallar \(\omega\), \(f\), \(N\) &
+  \(\omega = \pi \approx 3{,}14\) rad/s; \(f = 0{,}5\) Hz; \(N = 30\) rpm \\
+5  & \(m = 2\) kg, \(r = 3\) m, \(\omega = 2\) rad/s &
+  \(v = 6\) m/s; \(a_c = 12\) m/s\(^2\); \(F_c = 24\) N; \(E_c = 36\) J; \(L = 36\) kg·m\(^2\)/s \\
+6  & Conversiones a rad/s &
+  (a) \(2\pi\) rad/s; (b) \(10\pi\) rad/s; (c) \(\pi\) rad/s; (d) \(4\pi\) rad/s \\
+7  & \(T = 5400\) s &
+  \(\omega \approx 1{,}16 \times 10^{-3}\) rad/s; \(f \approx 1{,}85 \times 10^{-4}\) Hz \\
+8  & 3000 rpm, \(r = 0{,}15\) m &
+  \(\omega = 100\pi\) rad/s; \(a_c = 1500\pi^2 \approx 1{,}48 \times 10^4\) m/s\(^2\) \\
+\midrule
+9  & \(r = 1{,}5\) m, \(m = 0{,}3\) kg, \(T_{\max} = 30\) N &
+  \(\omega_{\max} = \sqrt{30/(0{,}3 \times 1{,}5)} \approx 8{,}16\) rad/s \\
+10 & \(r = 80\) m, \(v = 25\) m/s, \(m = 1500\) kg &
+  \(\omega = 0{,}3125\) rad/s; \(a_c = 7{,}81\) m/s\(^2\); \(F_c = 11718{,}75\) N \\
+11 & Ruedas conectadas, \(r_1 = 0{,}2\) m, \(\omega_1 = 30\) rad/s, \(r_2 = 0{,}5\) m &
+  \(\omega_2 = \omega_1 r_1 / r_2 = 12\) rad/s \\
+12 & \(m = 5\) kg, \(r = 0{,}4\) m, 120 rpm &
+  \(\omega = 4\pi\) rad/s; \(E_c = \frac{1}{2} m \omega^2 r^2 = 157{,}91\) J \\
+13 & \(r = 1\) m, MCU vertical, mínima \(\omega\) arriba &
+  \(\omega_{\min} = \sqrt{g/r} \approx 3{,}13\) rad/s \\
+14 & Péndulo cónico, \(L = 2\) m, \(\theta = 45^\circ\) &
+  \(\omega = \sqrt{g/(L\cos\theta)} \approx 2{,}36\) rad/s; \(r = \sqrt{2} \approx 1{,}41\) m; \(T_p \approx 2{,}67\) s \\
+15 & \(r = 0{,}5\) m, \(a_c = 20\) m/s\(^2\) &
+  \(\omega = \sqrt{40} \approx 6{,}32\) rad/s; \(v \approx 3{,}16\) m/s; \(T \approx 0{,}99\) s; \(f \approx 1{,}01\) Hz \\
+16 & Tierra con peso reducido a la mitad en el ecuador &
+  \(\omega = \sqrt{g/(2R_T)} \approx 8{,}74 \times 10^{-4}\) rad/s (aprox. 2{,}7 veces el actual) \\
+17 & Rueda de la fortuna, \(R = 12\) m, \(T_p = 30\) s &
+  \(\omega \approx 0{,}209\) rad/s; \(v \approx 2{,}51\) m/s; \(a_c \approx 0{,}525\) m/s\(^2\) \\
+\midrule
+18 & Curva peraltada, \(r = 100\) m, \(\alpha = 15^\circ\) &
+  \(v = \sqrt{r\,g\,\tan\alpha} \approx 16{,}22\) m/s \\
+19 & Satélite, \(h = 400\) km &
+  \(r = 6{,}77 \times 10^6\) m; \(v \approx 7672\) m/s; \(\omega \approx 1{,}13 \times 10^{-3}\) rad/s; \(T \approx 5544\) s \\
+20 & \(m = 0{,}5\) kg, \(r = 0{,}8\) m, \(T_{\max} = 100\) N &
+  \(v_{\max} = \sqrt{100 \times 0{,}8 / 0{,}5} \approx 12{,}65\) m/s; \(E_c = 40\) J \\
+21 & \(m_1 = 2\) kg, \(m_2 = 3\) kg, \(L = 1{,}5\) m, \(T = 60\) N &
+  \(r_1 = 0{,}9\) m, \(r_2 = 0{,}6\) m; \(\omega = \sqrt{60/(2 \times 0{,}9)} \approx 4{,}08\) rad/s \\
+22 & Curva, \(r = 20\) m, \(\mu_s = 0{,}6\) &
+  \(v_{\max} = \sqrt{\mu_s\,g\,r} \approx 10{,}84\) m/s \(\approx 39\) km/h \\
+23 & Plataforma, \(r = 0{,}3\) m, \(\mu_s = 0{,}4\) &
+  \(\omega_{\max} = \sqrt{\mu_s\,g/r} \approx 3{,}61\) rad/s \(\approx 34{,}54\) rpm \\
+24 & Péndulo cónico, \(m = 1{,}2\) kg, \(L = 1\) m, \(\omega = 4\) rad/s &
+  \(\cos\theta = g/(L\omega^2) = 0{,}6125 \Rightarrow \theta \approx 52{,}2^\circ\); \(T \approx 19{,}6\) N \\
+25 & Disco, \(m = 0{,}17\) kg, \(r = 0{,}8\) m, 60 rpm &
+  \(\omega = 2\pi\) rad/s; \(T \approx 8{,}58\) N; \(L \approx 1{,}72\) kg·m\(^2\)/s \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\newpage
+
+% ============================================================
+%  REFERENCIAS
+% ============================================================
+\section*{Referencias}
+
+\begin{enumerate}
+  \item Resnick, R., Halliday, D. \& Krane, K. (1998). \textit{Física}, vol. 1 (5\textsuperscript{a} ed.). Editorial CECSA.
+  \item Sears, F. W., Zemansky, M. W. \& Young, H. D. (2009). \textit{Universidad con Física Moderna} (12\textsuperscript{a} ed.). Pearson Educación.
+  \item Tipler, P. A. \& Mosca, G. (2005). \textit{Física para la Ciencia y la Tecnología}, vol. 1 (6\textsuperscript{a} ed.). Editorial Reverté.
+  \item Hewitt, P. G. (2007). \textit{Física Conceptual} (10\textsuperscript{a} ed.). Pearson Educación.
+  \item Khan Academy. \textit{Intro to motion in circles}. \url{https://www.khanacademy.org/science/physics/centripetal-forces-and-gravitation}
+  \item HyperPhysics. \textit{Circular Motion}. \url{http://hyperphysics.phy-astr.gsu.edu/hbase/circmot.html}
+\end{enumerate}
+
+\end{document}
