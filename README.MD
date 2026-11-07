@@ -13,6 +13,8 @@ Diseñado como laboratorio virtual para la enseñanza de la mecánica clásica: 
 
 Incluye una guía de ejercicios académica en LaTeX que usa el simulador como laboratorio virtual para aplicar las leyes del movimiento circular y la dinámica rotacional.
 
+https://jcteacher-lab.github.io/velocidadangular/
+
 ## Tabla de contenidos
 
 - [1. Características](#1-características)
@@ -95,7 +97,8 @@ http://localhost:8000
 ### Opción 3 — Publicar en GitHub Pages
 Sube los archivos a un repositorio público y activa GitHub Pages en la rama `main`. El simulador quedará disponible en:
 ```
-https://jcteacher-lab.github.io/movimientocircular/velocidadangular.html
+https://jcteacher-lab.github.io/velocidadangular/
+
 ```
 
 ---
@@ -351,9 +354,9 @@ Sustituye cada `<<...>>` por tus datos.
 
 - [x] Simulación básica de MCU con vectores de velocidad y fuerza.
 - [x] Panel de resultados físicos en tiempo real.
-- [x] Versión para escritorio (`simulador.html`).
-- [x] Versión para smartphone (`simulador-mobile.html`).
-- [x] Versión universal con modo TV y pantalla completa (`simulador-universal.html`).
+- [x] Versión para escritorio.
+- [x] Versión para smartphone.
+- [x] Versión universal con modo TV y pantalla completa.
 - [x] Atajos de teclado y soporte HiDPI.
 - [x] Guía de ejercicios académica en LaTeX.
 - [ ] Movimiento circular no uniforme (con aceleración angular α).
