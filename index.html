@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚙️ Movimiento Circular - Universal</title>
+<style>
+  :root {
+    --primary: #00e5ff;
+    --primary-dark: #0077b6;
+    --accent: #ffeb3b;
+    --bg-dark: #0f2027;
+    --bg-mid: #203a43;
+    --bg-light: #2c5364;
+    --text: #ffffff;
+    --text-dim: #b0bec5;
+    --panel-bg: rgba(255,255,255,0.08);
+    --panel-border: rgba(255,255,255,0.15);
+    --radius: clamp(8px, 1vw, 16px);
+    --font-base: clamp(13px, 1.1vw, 18px);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: var(--font-base);
+    color: var(--text);
+    background: linear-gradient(135deg, var(--bg-dark), var(--bg-mid), var(--bg-light));
+    overflow: hidden;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    background: rgba(0,0,0,0.4);
+    padding: clamp(8px, 1vh, 16px) clamp(12px, 2vw, 24px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,229,255,0.3);
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-size: clamp(1em, 2vw, 1.6em);
+    color: var(--primary);
+    text-shadow: 0 0 10px rgba(0,229,255,0.5);
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .icon-btn {
+    background: rgba(0,229,255,0.15);
+    border: 1px solid rgba(0,229,255,0.4);
+    color: var(--primary);
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .icon-btn:hover {
+    background: rgba(0,229,255,0.3);
+    transform: translateY(-1px);
+  }
+
+  /* ===== LAYOUT PRINCIPAL ===== */
+  .app {
+    display: grid;
+    grid-template-columns: 320px 1fr 340px;
+    grid-template-rows: 1fr;
+    gap: 15px;
+    padding: 15px;
+    height: calc(100vh - 60px);
+    height: calc(100dvh - 60px);
+  }
+
+  .panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius);
+    padding: clamp(12px, 1.5vw, 20px);
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .panel::-webkit-scrollbar { width: 6px; }
+  .panel::-webkit-scrollbar-track { background: transparent; }
+  .panel::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.3); border-radius: 3px; }
+
+  .panel h2 {
+    color: var(--primary);
+    font-size: clamp(1em, 1.3vw, 1.3em);
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0,229,255,0.3);
+  }
+
+  /* ===== CANVAS ===== */
+  .canvas-wrapper {
+    position: relative;
+    background: rgba(0,0,0,0.3);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--panel-border);
+  }
+
+  #canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: radial-gradient(circle, #1a2980, var(--bg-dark));
+  }
+
+  .canvas-hud {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0,0,0,0.7);
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,229,255,0.4);
+    font-size: 0.85em;
+    min-width: 180px;
+    pointer-events: none;
+  }
+
+  .canvas-hud .hud-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+  }
+
+  .canvas-hud .hud-label { color: var(--text-dim); }
+  .canvas-hud .hud-val { color: var(--primary); font-weight: bold; font-family: 'Courier New', monospace; }
+
+  .canvas-hint {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.6);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75em;
+    color: var(--text-dim);
+    pointer-events: none;
+    opacity: 0.8;
+  }
+
+  /* ===== CONTROLES ===== */
+  .control {
+    margin-bottom: 18px;
+    background: rgba(0,0,0,0.2);
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .control-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .control label {
+    font-size: 0.9em;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  .control .value {
+    background: rgba(0,229,255,0.2);
+    color: var(--primary);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.85em;
+    font-family: 'Courier New', monospace;
+    min-width: 75px;
+    text-align: center;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 32px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-radius: 50%;
+    margin-top: -8px;
+    box-shadow: 0 2px 8px rgba(0,229,255,0.5);
+    border: 2px solid #fff;
+    transition: transform 0.1s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+  input[type="range"]::-moz-range-track {
+    height: 6px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,229,255,0.5);
+    border: 2px solid #fff;
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .btn {
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    font-weight: bold;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0,229,255,0.3);
+  }
+
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,229,255,0.4); }
+  .btn:active { transform: translateY(0); }
+  .btn.pause { background: linear-gradient(135deg, #ff6b6b, #c0392b); box-shadow: 0 4px 12px rgba(255,107,107,0.3); }
+
+  /* Leyenda */
+  .legend {
+    margin-top: 20px;
+    padding: 12px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 10px;
+  }
+
+  .legend h3 {
+    color: var(--primary);
+    font-size: 0.9em;
+    margin-bottom: 10px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 0.85em;
+  }
+
+  .legend-color {
+    width: 22px;
+    height: 4px;
+    margin-right: 10px;
+    border-radius: 2px;
+  }
+
+  .shortcuts {
+    margin-top: 15px;
+    padding: 12px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 10px;
+    font-size: 0.8em;
+  }
+
+  .shortcuts h3 {
+    color: var(--primary);
+    font-size: 0.9em;
+    margin-bottom: 8px;
+  }
+
+  .shortcut-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+  }
+
+  kbd {
+    background: rgba(255,255,255,0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  /* ===== RESULTADOS ===== */
+  .result {
+    background: rgba(0,0,0,0.3);
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--primary);
+    transition: transform 0.2s;
+  }
+
+  .result:hover { transform: translateX(3px); }
+
+  .result .label {
+    font-size: 0.8em;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+
+  .result .val {
+    font-size: 1.15em;
+    font-weight: bold;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+  }
+
+  .result .unit {
+    color: var(--primary);
+    font-size: 0.8em;
+    margin-left: 5px;
+  }
+
+  .result.highlight {
+    background: linear-gradient(135deg, rgba(0,229,255,0.15), rgba(0,119,182,0.15));
+    border-left-color: var(--accent);
+  }
+
+  /* ===== MODO TV / PRESENTACIÓN ===== */
+  body.tv-mode header,
+  body.tv-mode .panel-left,
+  body.tv-mode .panel-right {
+    display: none;
+  }
+
+  body.tv-mode .app {
+    grid-template-columns: 1fr;
+    padding: 0;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  body.tv-mode .canvas-wrapper {
+    border-radius: 0;
+    border: none;
+  }
+
+  body.tv-mode .canvas-hud {
+    font-size: 1.2em;
+    min-width: 280px;
+    padding: 20px 24px;
+    top: 30px;
+    right: 30px;
+  }
+
+  body.tv-mode .canvas-hint {
+    font-size: 1em;
+    padding: 10px 20px;
+  }
+
+  .tv-controls {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    padding: 15px 25px;
+    border-radius: 50px;
+    gap: 15px;
+    border: 1px solid rgba(0,229,255,0.4);
+    z-index: 100;
+  }
+
+  body.tv-mode .tv-controls { display: flex; }
+
+  .tv-controls button {
+    background: rgba(0,229,255,0.2);
+    border: 1px solid rgba(0,229,255,0.5);
+    color: var(--primary);
+    padding: 12px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
+  }
+
+  .tv-controls button:hover { background: rgba(0,229,255,0.4); }
+
+  /* ===== RESPONSIVE ===== */
+  
+  /* Tablet landscape / Laptop pequeño */
+  @media (max-width: 1200px) {
+    .app {
+      grid-template-columns: 280px 1fr 300px;
+      gap: 10px;
+      padding: 10px;
+    }
+  }
+
+  /* Tablet portrait */
+  @media (max-width: 900px) {
+    .app {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto 1fr;
+    }
+    .canvas-wrapper {
+      grid-column: 1 / -1;
+      min-height: 50vh;
+    }
+  }
+
+  /* Móvil grande */
+  @media (max-width: 700px) {
+    .app {
+      grid-template-columns: 1fr;
+      grid-template-rows: 50vh auto auto;
+    }
+    .canvas-wrapper { grid-column: 1; }
+  }
+
+  /* Pantallas muy grandes (TV 4K) */
+  @media (min-width: 1800px) {
+    .app {
+      grid-template-columns: 400px 1fr 420px;
+      gap: 25px;
+      padding: 25px;
+    }
+    :root { --font-base: 18px; }
+  }
+
+  /* Pantalla ultra-wide */
+  @media (min-width: 2200px) {
+    :root { --font-base: 20px; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>⚙️ Simulador de Movimiento Circular</h1>
+    <div class="header-actions">
+      <button class="icon-btn" id="tvModeBtn" title="Modo TV / Presentación (F)">
+        📺 <span>Modo TV</span>
+      </button>
+      <button class="icon-btn" id="fullscreenBtn" title="Pantalla completa (F11)">
+        ⛶ <span>Pantalla Completa</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="app">
+    <!-- Panel de controles -->
+    <div class="panel panel-left">
+      <h2>🎛️ Controles</h2>
+      
+      <div class="control">
+        <div class="control-header">
+          <label>🔗 Longitud de cuerda (r)</label>
+          <div class="value" id="radioVal">1.5 m</div>
+        </div>
+        <input type="range" id="radio" min="0.5" max="3" step="0.1" value="1.5">
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label>🔄 Velocidad angular (ω)</label>
+          <div class="value" id="omegaVal">3.0 rad/s</div>
+        </div>
+        <input type="range" id="omega" min="0.5" max="10" step="0.1" value="3">
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label>⚖️ Masa del objeto (m)</label>
+          <div class="value" id="masaVal">2.0 kg</div>
+        </div>
+        <input type="range" id="masa" min="0.1" max="10" step="0.1" value="2">
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label>⏩ Velocidad de simulación</label>
+          <div class="value" id="speedVal">1.0x</div>
+        </div>
+        <input type="range" id="speed" min="0.1" max="3" step="0.1" value="1">
+      </div>
+
+      <div class="buttons">
+        <button class="btn pause" id="toggleBtn">⏸️ Pausar</button>
+        <button class="btn" id="resetBtn">🔄 Reiniciar</button>
+      </div>
+
+      <div class="legend">
+        <h3>📖 Leyenda</h3>
+        <div class="legend-item"><div class="legend-color" style="background:#ff5252"></div><span><b>Velocidad tangencial</b> (v)</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#4caf50"></div><span><b>Fuerza centrípeta</b> (Fc)</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffeb3b"></div><span><b>Aceleración centrípeta</b> (ac)</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#9c27b0"></div><span><b>Trayectoria circular</b></span></div>
+      </div>
+
+      <div class="shortcuts">
+        <h3>⌨️ Atajos de teclado</h3>
+        <div class="shortcut-row"><span>Pausar/Reanudar</span><kbd>Espacio</kbd></div>
+        <div class="shortcut-row"><span>Reiniciar</span><kbd>R</kbd></div>
+        <div class="shortcut-row"><span>Modo TV</span><kbd>F</kbd></div>
+        <div class="shortcut-row"><span>Pantalla completa</span><kbd>F11</kbd></div>
+      </div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-hud" id="canvasHud">
+        <div class="hud-row"><span class="hud-label">Velocidad (v):</span><span class="hud-val" id="hudV">4.50 m/s</span></div>
+        <div class="hud-row"><span class="hud-label">Fuerza (Fc):</span><span class="hud-val" id="hudFc">27.00 N</span></div>
+        <div class="hud-row"><span class="hud-label">Aceleración:</span><span class="hud-val" id="hudAc">13.50 m/s²</span></div>
+        <div class="hud-row"><span class="hud-label">RPM:</span><span class="hud-val" id="hudRpm">28.65</span></div>
+      </div>
+      <div class="canvas-hint">💡 Arrastra los sliders para cambiar los parámetros · Presiona <b>Espacio</b> para pausar</div>
+    </div>
+
+    <!-- Panel de resultados -->
+    <div class="panel panel-right">
+      <h2>📐 Resultados Físicos</h2>
+      
+      <div class="result">
+        <div class="label">Velocidad tangencial (v = ω·r)</div>
+        <div class="val" id="vVal">4.50<span class="unit">m/s</span></div>
+      </div>
+      
+      <div class="result">
+        <div class="label">Aceleración centrípeta (ac = ω²·r)</div>
+        <div class="val" id="acVal">13.50<span class="unit">m/s²</span></div>
+      </div>
+      
+      <div class="result highlight">
+        <div class="label">⚡ Fuerza centrípeta / Tensión (Fc = m·ac)</div>
+        <div class="val" id="fcVal">27.00<span class="unit">N</span></div>
+      </div>
+      
+      <div class="result">
+        <div class="label">Período (T = 2π/ω)</div>
+        <div class="val" id="tVal">2.09<span class="unit">s</span></div>
+      </div>
+      
+      <div class="result">
+        <div class="label">Frecuencia (f = 1/T)</div>
+        <div class="val" id="fVal">0.48<span class="unit">Hz</span></div>
+      </div>
+      
+      <div class="result">
+        <div class="label">Frecuencia en RPM</div>
+        <div class="val" id="rpmVal">28.65<span class="unit">rpm</span></div>
+      </div>
+      
+      <div class="result">
+        <div class="label">Energía cinética (Ec = ½mv²)</div>
+        <div class="val" id="ecVal">20.25<span class="unit">J</span></div>
+      </div>
+      
+      <div class="result">
+        <div class="label">Momento angular (L = m·v·r)</div>
+        <div class="val" id="lVal">13.50<span class="unit">kg·m²/s</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controles flotantes para modo TV -->
+  <div class="tv-controls">
+    <button id="tvPauseBtn">⏸️ Pausar</button>
+    <button id="tvResetBtn">🔄 Reiniciar</button>
+    <button id="tvExitBtn">✖ Salir Modo TV</button>
+  </div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+// ===== SOPORTE HiDPI (Retina / 4K) =====
+function resizeCanvas() {
+  const wrapper = canvas.parentElement;
+  const dpr = window.devicePixelRatio || 1;
+  const width = wrapper.clientWidth;
+  const height = wrapper.clientHeight;
+  
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  canvas.style.width = width + 'px';
+  canvas.style.height = height + 'px';
+  
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(dpr, dpr);
+  
+  // Guardar dimensiones lógicas
+  canvas.logicalWidth = width;
+  canvas.logicalHeight = height;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// ===== ESTADO =====
+let angle = 0;
+let paused = false;
+let lastTime = performance.now();
+let tvMode = false;
+
+// ===== CONTROLES =====
+const radioInput = document.getElementById('radio');
+const omegaInput = document.getElementById('omega');
+const masaInput = document.getElementById('masa');
+const speedInput = document.getElementById('speed');
+
+const trail = [];
+const maxTrail = 80;
+
+function updateValues() {
+  const r = parseFloat(radioInput.value);
+  const w = parseFloat(omegaInput.value);
+  const m = parseFloat(masaInput.value);
+
+  document.getElementById('radioVal').textContent = r.toFixed(1) + ' m';
+  document.getElementById('omegaVal').textContent = w.toFixed(1) + ' rad/s';
+  document.getElementById('masaVal').textContent = m.toFixed(1) + ' kg';
+  document.getElementById('speedVal').textContent = parseFloat(speedInput.value).toFixed(1) + 'x';
+
+  const v = w * r;
+  const ac = w * w * r;
+  const fc = m * ac;
+  const T = (2 * Math.PI) / w;
+  const f = 1 / T;
+  const rpm = f * 60;
+  const ec = 0.5 * m * v * v;
+  const L = m * v * r;
+
+  document.getElementById('vVal').innerHTML = v.toFixed(2) + '<span class="unit">m/s</span>';
+  document.getElementById('acVal').innerHTML = ac.toFixed(2) + '<span class="unit">m/s²</span>';
+  document.getElementById('fcVal').innerHTML = fc.toFixed(2) + '<span class="unit">N</span>';
+  document.getElementById('tVal').innerHTML = T.toFixed(2) + '<span class="unit">s</span>';
+  document.getElementById('fVal').innerHTML = f.toFixed(2) + '<span class="unit">Hz</span>';
+  document.getElementById('rpmVal').innerHTML = rpm.toFixed(2) + '<span class="unit">rpm</span>';
+  document.getElementById('ecVal').innerHTML = ec.toFixed(2) + '<span class="unit">J</span>';
+  document.getElementById('lVal').innerHTML = L.toFixed(2) + '<span class="unit">kg·m²/s</span>';
+
+  // HUD del canvas
+  document.getElementById('hudV').textContent = v.toFixed(2) + ' m/s';
+  document.getElementById('hudFc').textContent = fc.toFixed(2) + ' N';
+  document.getElementById('hudAc').textContent = ac.toFixed(2) + ' m/s²';
+  document.getElementById('hudRpm').textContent = rpm.toFixed(2);
+}
+
+[radioInput, omegaInput, masaInput, speedInput].forEach(el => {
+  el.addEventListener('input', updateValues);
+});
+
+function togglePause() {
+  paused = !paused;
+  const btn = document.getElementById('toggleBtn');
+  const tvBtn = document.getElementById('tvPauseBtn');
+  btn.textContent = paused ? '▶️ Reanudar' : '⏸️ Pausar';
+  btn.classList.toggle('pause', !paused);
+  tvBtn.textContent = paused ? '▶️ Reanudar' : '⏸️ Pausar';
+}
+
+document.getElementById('toggleBtn').addEventListener('click', togglePause);
+document.getElementById('tvPauseBtn').addEventListener('click', togglePause);
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  angle = 0;
+  trail.length = 0;
+});
+document.getElementById('tvResetBtn').addEventListener('click', () => {
+  angle = 0;
+  trail.length = 0;
+});
+
+// ===== MODO TV =====
+function toggleTvMode() {
+  tvMode = !tvMode;
+  document.body.classList.toggle('tv-mode', tvMode);
+  document.getElementById('tvModeBtn').querySelector('span').textContent = tvMode ? 'Salir TV' : 'Modo TV';
+  setTimeout(resizeCanvas, 100);
+}
+
+document.getElementById('tvModeBtn').addEventListener('click', toggleTvMode);
+document.getElementById('tvExitBtn').addEventListener('click', toggleTvMode);
+
+// ===== PANTALLA COMPLETA =====
+document.getElementById('fullscreenBtn').addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(err => console.log(err));
+  } else {
+    document.exitFullscreen();
+  }
+});
+
+document.addEventListener('fullscreenchange', () => {
+  setTimeout(resizeCanvas, 100);
+});
+
+// ===== ATAJOS DE TECLADO =====
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') return;
+  
+  switch(e.key.toLowerCase()) {
+    case ' ':
+      e.preventDefault();
+      togglePause();
+      break;
+    case 'r':
+      angle = 0;
+      trail.length = 0;
+      break;
+    case 'f':
+      toggleTvMode();
+      break;
+    case 'arrowup':
+      e.preventDefault();
+      omegaInput.value = Math.min(10, parseFloat(omegaInput.value) + 0.5);
+      updateValues();
+      break;
+    case 'arrowdown':
+      e.preventDefault();
+      omegaInput.value = Math.max(0.5, parseFloat(omegaInput.value) - 0.5);
+      updateValues();
+      break;
+    case 'arrowright':
+      e.preventDefault();
+      radioInput.value = Math.min(3, parseFloat(radioInput.value) + 0.1);
+      updateValues();
+      break;
+    case 'arrowleft':
+      e.preventDefault();
+      radioInput.value = Math.max(0.5, parseFloat(radioInput.value) - 0.1);
+      updateValues();
+      break;
+  }
+});
+
+// ===== DIBUJO =====
+function drawArrow(fromX, fromY, toX, toY, color, label, lineWidth = 3) {
+  const headLen = 12;
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  const ang = Math.atan2(dy, dx);
+
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(fromX, fromY);
+  ctx.lineTo(toX, toY);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(toX, toY);
+  ctx.lineTo(toX - headLen * Math.cos(ang - Math.PI/6), toY - headLen * Math.sin(ang - Math.PI/6));
+  ctx.lineTo(toX - headLen * Math.cos(ang + Math.PI/6), toY - headLen * Math.sin(ang + Math.PI/6));
+  ctx.closePath();
+  ctx.fill();
+
+  if (label) {
+    ctx.font = `bold ${14}px -apple-system, sans-serif`;
+    ctx.fillStyle = color;
+    ctx.fillText(label, toX + 10, toY - 10);
+  }
+}
+
+function animate(now) {
+  const dt = Math.min((now - lastTime) / 1000, 0.1);
+  lastTime = now;
+
+  const r = parseFloat(radioInput.value);
+  const w = parseFloat(omegaInput.value);
+  const m = parseFloat(masaInput.value);
+  const speed = parseFloat(speedInput.value);
+
+  if (!paused) {
+    angle += w * dt * speed;
+  }
+
+  const W = canvas.logicalWidth;
+  const H = canvas.logicalHeight;
+  const cx = W / 2;
+  const cy = H / 2;
+  const scale = Math.min(W, H) * 0.14;
+  const px = cx + r * scale * Math.cos(angle);
+  const py = cy + r * scale * Math.sin(angle);
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  const gridSize = 50;
+  for (let i = 0; i < W; i += gridSize) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, H); ctx.stroke();
+  }
+  for (let i = 0; i < H; i += gridSize) {
+    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(W, i); ctx.stroke();
+  }
+
+  // Trayectoria
+  ctx.strokeStyle = 'rgba(156, 39, 176, 0.5)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([8, 8]);
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * scale, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Estela
+  if (!paused) {
+    trail.push({x: px, y: py});
+    if (trail.length > maxTrail) trail.shift();
+  }
+  for (let i = 0; i < trail.length; i++) {
+    const alpha = i / trail.length;
+    ctx.fillStyle = `rgba(0, 229, 255, ${alpha * 0.5})`;
+    ctx.beginPath();
+    ctx.arc(trail[i].x, trail[i].y, 3 + alpha * 4, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+
+  // Cuerda
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(px, py);
+  ctx.stroke();
+
+  // Pivote
+  ctx.fillStyle = '#ffeb3b';
+  ctx.beginPath();
+  ctx.arc(cx, cy, 12, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Objeto
+  const objRadius = 14 + m * 1.5;
+  const gradient = ctx.createRadialGradient(px - 4, py - 4, 2, px, py, objRadius);
+  gradient.addColorStop(0, '#ffb74d');
+  gradient.addColorStop(1, '#e65100');
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.arc(px, py, objRadius, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Vectores
+  const v = w * r;
+  const ac = w * w * r;
+  const fc = m * ac;
+
+  const vScale = 14;
+  const fScale = 2;
+
+  // Velocidad tangencial
+  const vx = -Math.sin(angle) * v * vScale;
+  const vy = Math.cos(angle) * v * vScale;
+  drawArrow(px, py, px + vx, py + vy, '#ff5252', 'v');
+
+  // Fuerza centrípeta
+  const fcx = -Math.cos(angle) * fc * fScale;
+  const fcy = -Math.sin(angle) * fc * fScale;
+  drawArrow(px, py, px + fcx, py + fcy, '#4caf50', 'Fc');
+
+  // Aceleración centrípeta
+  const acx = -Math.cos(angle) * ac * 3;
+  const acy = -Math.sin(angle) * ac * 3;
+  drawArrow(px, py, px + acx, py + acy, '#ffeb3b', 'ac');
+
+  // Etiqueta de masa en el objeto
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 12px -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(m.toFixed(1) + ' kg', px, py + objRadius + 18);
+  ctx.textAlign = 'left';
+
+  requestAnimationFrame(animate);
+}
+
+updateValues();
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>
