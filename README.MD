@@ -46,14 +46,6 @@ Incluye una guía de ejercicios académica en LaTeX que usa el simulador como la
 - **Estela luminosa** que muestra las últimas posiciones del objeto.
 - **HUD flotante** con las magnitudes clave en pantalla.
 
-### Tres versiones adaptadas a distintos dispositivos
-
-| Archivo | Dispositivo | Características |
-|---------|-------------|-----------------|
-| `simulador.html` | Escritorio / Laptop | Layout de 3 columnas, controles laterales, resultados completos. |
-| `simulador-mobile.html` | Smartphone | Sistema de pestañas, sliders grandes, optimizado para touch. |
-| `simulador-universal.html` | Tablet / Laptop / TV | Layout responsive, modo TV/presentación, pantalla completa, atajos de teclado, soporte HiDPI/4K. |
-
 ### Controles interactivos
 - 🔗 **Longitud de la cuerda (r)**: de 0.5 a 3 m.
 - 🔄 **Velocidad angular (ω)**: de 0.5 a 10 rad/s.
@@ -87,16 +79,14 @@ Incluye una guía de ejercicios académica en LaTeX que usa el simulador como la
 
 ### Opción 1 — Abrir directamente
 1. Descarga o copia el contenido del simulador deseado en un archivo:
-   - `simulador.html` (escritorio)
-   - `simulador-mobile.html` (móvil)
-   - `simulador-universal.html` (universal)
+   - `index.html`
 2. Haz doble clic en el archivo para abrirlo en cualquier navegador moderno (Chrome, Firefox, Edge, Safari).
 3. Listo. No requiere servidor web ni conexión a internet.
 
 ### Opción 2 — Servir localmente
 ```bash
-git clone https://github.com/jcteacher-lab/movimientocircular.git
-cd movimientocircular
+git clone https://github.com/jcteacher-lab/velocidadangular.git
+cd velocidadangular
 python3 -m http.server 8000
 # Luego abre en tu navegador:
 http://localhost:8000
@@ -105,7 +95,7 @@ http://localhost:8000
 ### Opción 3 — Publicar en GitHub Pages
 Sube los archivos a un repositorio público y activa GitHub Pages en la rama `main`. El simulador quedará disponible en:
 ```
-https://<usuario>.github.io/movimientocircular/simulador-universal.html
+https://jcteacher-lab.github.io/movimientocircular/velocidadangular.html
 ```
 
 ---
@@ -118,9 +108,7 @@ movimientocircular/
 ├── LICENSE                         ← texto legal GNU GPL v3
 ├── Makefile                        ← compila todo (simulador + guía)
 ├── .gitignore                      ← exclusiones para Git
-├── simulador.html                  ← versión escritorio
-├── simulador-mobile.html           ← versión smartphone
-├── simulador-universal.html        ← versión tablet/laptop/TV
+├── index.html                      ← aplicación
 └── docs/
     ├── guia-ejercicios/
     │   ├── guia-ejercicios.tex     ← guía académica en LaTeX
@@ -135,9 +123,7 @@ movimientocircular/
 
 | Archivo | Descripción |
 |---------|-------------|
-| `simulador.html` | Versión de escritorio con layout de 3 columnas. |
-| `simulador-mobile.html` | Versión móvil con sistema de pestañas y controles touch. |
-| `simulador-universal.html` | Versión responsive con modo TV, pantalla completa y atajos. |
+| `index.html` | aplicación con layout de 3 columnas. |
 | `docs/guia-ejercicios/guia-ejercicios.tex` | Guía de ejercicios académica (portada, marco teórico, 6 bloques de ejercicios, apéndices, bibliografía). |
 | `Makefile` | Compila el PDF de la guía y sirve el simulador localmente. |
 | `LICENSE` | Texto legal completo de la GNU GPL v3. |
